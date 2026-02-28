@@ -77,7 +77,6 @@ All agents are deployed on **Azure OpenAI (gpt-4o)** via Azure AI Foundry and co
 | Database    | PostgreSQL (asyncpg), Redis                                    |
 | Monitoring  | Prometheus, OpenTelemetry, Azure Application Insights          |
 | Integration | MCP (Model Context Protocol) for external tool access          |
-| Infra       | Docker, Docker Compose                                         |
 
 ## Getting Started
 
@@ -85,7 +84,8 @@ All agents are deployed on **Azure OpenAI (gpt-4o)** via Azure AI Foundry and co
 
 - Python 3.12+
 - Node.js 20+
-- Docker & Docker Compose
+- PostgreSQL 14+
+- Redis 7+
 - Azure subscription with OpenAI & AI Foundry resources
 
 ### 1. Clone & Configure
@@ -97,18 +97,7 @@ cp .env.example .env
 # Edit .env with your Azure credentials and database settings
 ```
 
-### 2. Run with Docker Compose
-
-```bash
-docker compose up --build
-```
-
-- **Frontend:** http://localhost:3000
-- **Backend API:** http://localhost:8000
-- **API Docs:** http://localhost:8000/docs
-- **Metrics:** http://localhost:8000/metrics
-
-### 3. Manual Setup (Development)
+### 2. Setup Development Environment
 
 **Backend:**
 
@@ -128,6 +117,10 @@ cd frontend
 npm install
 npm run dev
 ```
+
+- **Frontend:** http://localhost:5173
+- **Backend API:** http://localhost:8000
+- **API Docs:** http://localhost:8000/docs
 
 ## Environment Variables
 
@@ -192,7 +185,6 @@ CRACLE integrates with the [Model Context Protocol](https://modelcontextprotocol
 │   │   ├── db/              # Database engine & session
 │   │   ├── models/          # SQLAlchemy ORM models
 │   │   └── services/        # Azure AI, MCP, monitoring
-│   ├── Dockerfile
 │   ├── requirements.txt
 │   └── verify_azure_agents.py  # Azure connectivity verification
 ├── frontend/
@@ -203,10 +195,7 @@ CRACLE integrates with the [Model Context Protocol](https://modelcontextprotocol
 │   │   ├── store/           # Zustand state management
 │   │   ├── App.jsx          # Main app with routing
 │   │   └── main.jsx         # Entry point
-│   ├── Dockerfile
-│   ├── nginx.conf          # Production web server config
 │   └── package.json
-├── docker-compose.yml
 ├── .env.example
 ├── AZURE_AGENTS_SETUP.md   # Detailed Azure deployment guide
 ├── azure_agent_config.json # Azure agent configuration manifest
