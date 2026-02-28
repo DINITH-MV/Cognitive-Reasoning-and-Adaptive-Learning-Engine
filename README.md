@@ -26,28 +26,28 @@ CRACLE transforms education through intelligent multi-agent AI architecture. Sev
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│                   React Frontend                     │
-│  Dashboard │ Learning Path │ Simulation │ Monitoring │
+│                   React Frontend                    │
+│  Dashboard │ Learning Path │ Simulation │ Monitoring│
 └────────────────────────┬────────────────────────────┘
                          │  REST API
 ┌────────────────────────▼────────────────────────────┐
-│                  FastAPI Backend                      │
-│                                                      │
-│  ┌─────────────────────────────────────────────────┐ │
-│  │            Agent Orchestrator                    │ │
-│  │  ┌─────────┬───────────┬──────────┬───────────┐ │ │
-│  │  │ Planner │ Content   │ Simulate │ Evaluator │ │ │
-│  │  │  Agent  │ Generator │  Agent   │   Agent   │ │ │
-│  │  └─────────┴───────────┴──────────┴───────────┘ │ │
-│  │     │  Mentor Agent  │  Memory Agent  │          │ │
-│  └─────┴────────────────┴────────────────┴─────────┘ │
-│                                                      │
-│  Azure OpenAI (gpt-4o) │ Azure AI Foundry            │
-└──────────┬──────────────┬──────────────┬─────────────┘
+│                  FastAPI Backend                    │
+│                                                     │
+│  ┌─────────────────────────────────────────────────┐│
+│  │            Agent Orchestrator                   ││
+│  │  ┌─────────┬───────────┬──────────┬───────────┐ ││
+│  │  │ Planner │ Content   │ Simulate │ Evaluator │ ││
+│  │  │  Agent  │ Generator │  Agent   │   Agent   │ ││
+│  │  └─────────┴───────────┴──────────┴───────────┘ ││
+│  │     │  Mentor Agent  │  Memory Agent  │         ││
+│  └─────┴────────────────┴────────────────┴─────────┘│
+│                                                     │
+│  Azure OpenAI (gpt-4o) │ Azure AI Foundry           │
+└──────────┬──────────────┬──────────────┬────────────┘
            │              │              │
     ┌──────▼──────┐ ┌─────▼────┐ ┌──────▼──────┐
-    │  PostgreSQL  │ │  Redis   │ │Azure Blob   │
-    │   (Neon)     │ │          │ │  Storage    │
+    │  PostgreSQL │ │  Redis   │ │Azure Blob   │
+    │   (Neon)    │ │          │ │  Storage    │
     └─────────────┘ └──────────┘ └─────────────┘
 ```
 
