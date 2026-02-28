@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Send, MessageSquare, Bot, User, Loader } from 'lucide-react';
 import { agentAPI } from '../api/client';
 import ReactMarkdown from 'react-markdown';
+import ReasoningVisualization from '../components/ReasoningVisualization';
 
 export default function Mentor() {
   const [messages, setMessages] = useState([
@@ -12,7 +13,13 @@ export default function Mentor() {
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [sessionId, setSessionId] = useState(null);
   const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    // Generate a unique session ID for this conversation
+    setSessionId(`mentor-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -43,6 +50,7 @@ export default function Mentor() {
       const response = await agentAPI.chatWithMentor({
         message: userMessage,
         conversation_history: conversationHistory,
+        session_id: sessionId,
       });
 
       // Add assistant response
@@ -64,7 +72,7 @@ export default function Mentor() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto h-[calc(100vh-8rem)] flex flex-col">
+    <div className="max-w-7xl mx-auto h-[calc(100vh-8rem)]">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">AI Mentor</h1>
         <p className="text-gray-600">
@@ -72,87 +80,99 @@ export default function Mentor() {
         </p>
       </div>
 
-      <div className="card flex-1 flex flex-col overflow-hidden">
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {messages.map((message, idx) => (
-            <div
-              key={idx}
-              className={`flex gap-3 ${
-                message.role === 'user' ? 'flex-row-reverse' : ''
-              }`}
-            >
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                  message.role === 'user'
-                    ? 'bg-primary-100'
-                    : 'bg-purple-100'
-                }`}
-              >
-                {message.role === 'user' ? (
-                  <User className="w-5 h-5 text-primary-700" />
-                ) : (
-                  <Bot className="w-5 h-5 text-purple-700" />
-                )}
-              </div>
-              <div
-                className={`flex-1 ${
-                  message.role === 'user' ? 'text-right' : ''
-                }`}
-              >
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100%-5rem)]">
+        {/* Chat Area */}
+        <div className="lg:col-span-2">
+          <div className="card h-full flex flex-col overflow-hidden">
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              {messages.map((message, idx) => (
                 <div
-                  className={`inline-block max-w-[80%] px-4 py-2 rounded-lg ${
-                    message.role === 'user'
-                      ? 'bg-primary-600 text-white'
-                      : 'bg-gray-100 text-gray-900'
+                  key={idx}
+                  className={`flex gap-3 ${
+                    message.role === 'user' ? 'flex-row-reverse' : ''
                   }`}
                 >
-                  {message.role === 'assistant' ? (
-                    <div className="prose prose-sm max-w-none prose-invert:text-white">
-                      <ReactMarkdown>{message.content}</ReactMarkdown>
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                      message.role === 'user'
+                        ? 'bg-primary-100'
+                        : 'bg-purple-100'
+                    }`}
+                  >
+                    {message.role === 'user' ? (
+                      <User className="w-5 h-5 text-primary-700" />
+                    ) : (
+                      <Bot className="w-5 h-5 text-purple-700" />
+                    )}
+                  </div>
+                  <div
+                    className={`flex-1 ${
+                      message.role === 'user' ? 'text-right' : ''
+                    }`}
+                  >
+                    <div
+                      className={`inline-block max-w-[80%] px-4 py-2 rounded-lg ${
+                        message.role === 'user'
+                          ? 'bg-primary-600 text-white'
+                          : 'bg-gray-100 text-gray-900'
+                      }`}
+                    >
+                      {message.role === 'assistant' ? (
+                        <div className="prose prose-sm max-w-none prose-invert:text-white">
+                          <ReactMarkdown>{message.content}</ReactMarkdown>
+                        </div>
+                      ) : (
+                        <p className="whitespace-pre-wrap">{message.content}</p>
+                      )}
                     </div>
-                  ) : (
-                    <p className="whitespace-pre-wrap">{message.content}</p>
-                  )}
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))}
+              ))}
 
-          {loading && (
-            <div className="flex gap-3">
-              <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                <Bot className="w-5 h-5 text-purple-700" />
-              </div>
-              <div className="bg-gray-100 px-4 py-2 rounded-lg">
-                <Loader className="w-5 h-5 animate-spin text-gray-600" />
-              </div>
-            </div>
-          )}
+              {loading && (
+                <div className="flex gap-3">
+                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                    <Bot className="w-5 h-5 text-purple-700" />
+                  </div>
+                  <div className="bg-gray-100 px-4 py-2 rounded-lg">
+                    <Loader className="w-5 h-5 animate-spin text-gray-600" />
+                  </div>
+                </div>
+              )}
 
-          <div ref={messagesEndRef} />
+              <div ref={messagesEndRef} />
+            </div>
+
+            {/* Input */}
+            <form onSubmit={handleSubmit} className="border-t border-gray-200 p-4">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Ask me anything..."
+                  className="input flex-1"
+                  disabled={loading}
+                />
+                <button
+                  type="submit"
+                  disabled={loading || !input.trim()}
+                  className="btn btn-primary"
+                >
+                  <Send className="w-5 h-5" />
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
 
-        {/* Input */}
-        <form onSubmit={handleSubmit} className="border-t border-gray-200 p-4">
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask me anything..."
-              className="input flex-1"
-              disabled={loading}
-            />
-            <button
-              type="submit"
-              disabled={loading || !input.trim()}
-              className="btn btn-primary"
-            >
-              <Send className="w-5 h-5" />
-            </button>
-          </div>
-        </form>
+        {/* Reasoning Visualization */}
+        <div className="lg:col-span-1">
+          {loading && sessionId && (
+            <ReasoningVisualization sessionId={sessionId} />
+          )}
+        </div>
       </div>
     </div>
   );

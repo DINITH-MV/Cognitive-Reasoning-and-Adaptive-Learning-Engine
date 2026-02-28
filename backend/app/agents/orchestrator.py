@@ -15,6 +15,8 @@ from app.agents.content_generator import ContentGeneratorAgent
 from app.agents.simulation import SimulationAgent
 from app.agents.evaluator import EvaluatorAgent
 from app.agents.mentor import MentorAgent
+from app.agents.memory import MemoryAgent
+from app.api.routes.reasoning import emit_reasoning_step
 
 logger = structlog.get_logger(__name__)
 
@@ -31,6 +33,7 @@ class AgentOrchestrator:
         self.simulation = SimulationAgent()
         self.evaluator = EvaluatorAgent()
         self.mentor = MentorAgent()
+        self.memory = MemoryAgent()
         self.logger = logger.bind(component="orchestrator")
 
     # ── Learning Path Workflows ──────────────────────────
@@ -43,14 +46,43 @@ class AgentOrchestrator:
         time_available_hours: int,
         target_outcome: str,
         db: AsyncSession,
+        session_id: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
-        Full workflow: Planner creates a plan, then Content Generator
-        prepares the first module.
+        Full workflow: Memory provides context → Planner creates a plan → 
+        Content Generator prepares the first module.
         """
         self.logger.info("Creating learning plan", user_id=str(user_id), goal=goal)
 
-        # Step 1: Planner creates the learning path
+        # Step 0: Get memory context for the planner
+        if session_id:
+            await emit_reasoning_step(
+                session_id,
+                "orchestrator",
+                "thinking",
+                "Analyzing user's learning history and cognitive profile...",
+            )
+        
+        memory_context = await self.memory.get_learning_context_for_planner(user_id, db)
+        
+        if session_id:
+            await emit_reasoning_step(
+                session_id,
+                "memory",
+                "completed",
+                f"Retrieved context: {len(memory_context.get('recent_evaluations', []))} recent evaluations, cognitive traits analyzed.",
+                {"progress": 20},
+            )
+
+        # Step 1: Planner creates the learning path with memory context
+        if session_id:
+            await emit_reasoning_step(
+                session_id,
+                "planner",
+                "thinking",
+                f"Designing personalized learning path for '{goal}' at {skill_level} level...",
+            )
+        
         plan_result = await self.planner.execute(
             context={
                 "user_id": user_id,
@@ -58,14 +90,32 @@ class AgentOrchestrator:
                 "skill_level": skill_level,
                 "time_available_hours": time_available_hours,
                 "target_outcome": target_outcome,
+                "memory_context": memory_context.get("contextual_memory", {}),
             },
             db=db,
         )
+        
+        if session_id:
+            await emit_reasoning_step(
+                session_id,
+                "planner",
+                "completed",
+                f"Learning path created with {len(plan_result.get('plan', {}).get('learning_path', {}).get('modules', []))} modules.",
+                {"progress": 60},
+            )
 
         # Step 2: Generate content for the first milestone
         next_action = plan_result.get("next_action", {})
         first_content = None
         if next_action:
+            if session_id:
+                await emit_reasoning_step(
+                    session_id,
+                    "content_generator",
+                    "executing",
+                    f"Generating first lesson: '{next_action.get('title', goal)}'...",
+                )
+            
             first_content = await self.content_generator.execute(
                 context={
                     "content_type": next_action.get("type", "lesson"),
@@ -76,6 +126,15 @@ class AgentOrchestrator:
                 },
                 db=db,
             )
+            
+            if session_id:
+                await emit_reasoning_step(
+                    session_id,
+                    "content_generator",
+                    "completed",
+                    "First lesson content generated successfully!",
+                    {"progress": 100},
+                )
 
         return {
             "learning_path": plan_result,
@@ -205,16 +264,55 @@ class AgentOrchestrator:
         message: str,
         conversation_history: list = None,
         db: AsyncSession = None,
+        session_id: Optional[str] = None,
     ) -> Dict[str, Any]:
-        """Chat with the mentor agent."""
-        return await self.mentor.execute(
+        """Chat with the mentor agent with memory context."""
+        # Get memory context for personalized guidance
+        if session_id:
+            await emit_reasoning_step(
+                session_id,
+                "memory",
+                "thinking",
+                "Retrieving your learning history and preferences...",
+            )
+        
+        memory_context = await self.memory.get_guidance_context_for_mentor(user_id, db)
+        
+        if session_id:
+            await emit_reasoning_step(
+                session_id,
+                "memory",
+                "completed",
+                "Context loaded: analyzing your strengths and learning patterns.",
+                {"progress": 30},
+            )
+            await emit_reasoning_step(
+                session_id,
+                "mentor",
+                "thinking",
+                "Crafting personalized guidance based on your profile...",
+            )
+        
+        result = await self.mentor.execute(
             context={
                 "user_id": user_id,
                 "message": message,
                 "conversation_history": conversation_history or [],
+                "memory_context": memory_context.get("contextual_memory", {}),
             },
             db=db,
         )
+        
+        if session_id:
+            await emit_reasoning_step(
+                session_id,
+                "mentor",
+                "completed",
+                "Response generated with personalized insights.",
+                {"progress": 100},
+            )
+        
+        return result
 
     # ── Content Generation ──────────────────────────
 
@@ -236,6 +334,50 @@ class AgentOrchestrator:
                 "user_id": user_id,
                 **kwargs,
             },
+            db=db,
+        )
+
+    # ── Memory Operations ──────────────────────────
+
+    async def get_user_memory_summary(
+        self,
+        user_id: uuid.UUID,
+        db: AsyncSession,
+    ) -> Dict[str, Any]:
+        """Get comprehensive memory summary for a user."""
+        return await self.memory.execute(
+            context={"action": "summary", "user_id": user_id},
+            db=db,
+        )
+
+    async def retrieve_user_memories(
+        self,
+        user_id: uuid.UUID,
+        query_type: str,
+        db: AsyncSession,
+        filters: dict = None,
+        limit: int = 10,
+    ) -> Dict[str, Any]:
+        """Retrieve specific user memories."""
+        return await self.memory.execute(
+            context={
+                "action": "retrieve",
+                "user_id": user_id,
+                "query_type": query_type,
+                "filters": filters or {},
+                "limit": limit,
+            },
+            db=db,
+        )
+
+    async def track_user_evolution(
+        self,
+        user_id: uuid.UUID,
+        db: AsyncSession,
+    ) -> Dict[str, Any]:
+        """Track cognitive evolution over time."""
+        return await self.memory.execute(
+            context={"action": "track_evolution", "user_id": user_id},
             db=db,
         )
 

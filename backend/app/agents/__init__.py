@@ -7,6 +7,7 @@ from app.agents.content_generator import ContentGeneratorAgent
 from app.agents.simulation import SimulationAgent
 from app.agents.evaluator import EvaluatorAgent
 from app.agents.mentor import MentorAgent
+from app.agents.memory import MemoryAgent
 from app.agents.orchestrator import AgentOrchestrator, orchestrator
 
 __all__ = [
@@ -15,6 +16,7 @@ __all__ = [
     "SimulationAgent",
     "EvaluatorAgent",
     "MentorAgent",
+    "MemoryAgent",
     "AgentOrchestrator",
     "orchestrator",
 ]

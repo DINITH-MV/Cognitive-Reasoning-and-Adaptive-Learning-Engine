@@ -10,7 +10,7 @@ import structlog
 
 from app.config import settings
 from app.db.database import engine, Base
-from app.api.routes import auth, learning, agents, monitoring, simulations
+from app.api.routes import auth, learning, agents, monitoring, simulations, reasoning
 from app.services.monitoring import setup_telemetry
 
 logger = structlog.get_logger(__name__)
@@ -64,6 +64,7 @@ app.include_router(learning.router, prefix="/api/v1/learning", tags=["Learning"]
 app.include_router(agents.router, prefix="/api/v1/agents", tags=["Agents"])
 app.include_router(simulations.router, prefix="/api/v1/simulations", tags=["Simulations"])
 app.include_router(monitoring.router, prefix="/api/v1/monitoring", tags=["Monitoring"])
+app.include_router(reasoning.router, prefix="/api/v1", tags=["Reasoning"])
 
 
 @app.get("/api/health")

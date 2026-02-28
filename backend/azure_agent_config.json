@@ -1,0 +1,220 @@
+{
+  "azure_deployment": {
+    "subscription_id": "b50ab8b6-7ef0-4f07-ab94-715fad13ea34",
+    "resource_group": "rg-CognitiveReasoningSys1",
+    "location": "australiaeast",
+    "deployment_date": "2026-02-28",
+    "status": "active"
+  },
+  "azure_ai_foundry": {
+    "endpoint": "https://resource-cognitivereasoningsys1.services.ai.azure.com/",
+    "project_name": "cognitivereasoningsys1",
+    "project_id": "CognitiveReasoningSys1",
+    "api_version": "2024-12-01-preview"
+  },
+  "azure_openai": {
+    "endpoint": "https://resource-cognitivereasoningsys1.cognitiveservices.azure.com/",
+    "deployment_name": "gpt-4o",
+    "model": "gpt-4o",
+    "api_version": "2024-12-01-preview",
+    "capabilities": [
+      "chat_completion",
+      "json_mode",
+      "function_calling",
+      "streaming"
+    ]
+  },
+  "agents": [
+    {
+      "name": "PlannerAgent",
+      "agent_id": "planner",
+      "file": "backend/app/agents/planner.py",
+      "azure_integration": "enabled",
+      "model_deployment": "gpt-4o",
+      "capabilities": [
+        "Goal analysis",
+        "Learning path creation",
+        "Milestone planning",
+        "Adaptive recommendations"
+      ],
+      "system_prompt_version": "1.0",
+      "average_tokens_per_request": 2500,
+      "temperature": 0.7,
+      "status": "deployed"
+    },
+    {
+      "name": "ContentGeneratorAgent",
+      "agent_id": "content_generator",
+      "file": "backend/app/agents/content_generator.py",
+      "azure_integration": "enabled",
+      "model_deployment": "gpt-4o",
+      "capabilities": [
+        "Course material generation",
+        "Quiz creation",
+        "Simulation scenarios",
+        "Interactive content"
+      ],
+      "system_prompt_version": "1.0",
+      "average_tokens_per_request": 3000,
+      "temperature": 0.7,
+      "status": "deployed"
+    },
+    {
+      "name": "SimulationAgent",
+      "agent_id": "simulation",
+      "file": "backend/app/agents/simulation.py",
+      "azure_integration": "enabled",
+      "model_deployment": "gpt-4o",
+      "capabilities": [
+        "Real-world scenario creation",
+        "Decision processing",
+        "Outcome generation",
+        "Pattern tracking"
+      ],
+      "system_prompt_version": "1.0",
+      "average_tokens_per_request": 2800,
+      "temperature": 0.8,
+      "status": "deployed"
+    },
+    {
+      "name": "EvaluatorAgent",
+      "agent_id": "evaluator",
+      "file": "backend/app/agents/evaluator.py",
+      "azure_integration": "enabled",
+      "model_deployment": "gpt-4o",
+      "capabilities": [
+        "Performance scoring",
+        "Cognitive profiling",
+        "Gap analysis",
+        "Feedback generation"
+      ],
+      "system_prompt_version": "1.0",
+      "average_tokens_per_request": 2200,
+      "temperature": 0.3,
+      "status": "deployed"
+    },
+    {
+      "name": "MentorAgent",
+      "agent_id": "mentor",
+      "file": "backend/app/agents/mentor.py",
+      "azure_integration": "enabled",
+      "model_deployment": "gpt-4o",
+      "capabilities": [
+        "Natural language guidance",
+        "Concept explanation",
+        "Motivational support",
+        "Personalized recommendations"
+      ],
+      "system_prompt_version": "1.0",
+      "average_tokens_per_request": 1800,
+      "temperature": 0.7,
+      "status": "deployed"
+    },
+    {
+      "name": "MemoryAgent",
+      "agent_id": "memory",
+      "file": "backend/app/agents/memory.py",
+      "azure_integration": "enabled",
+      "model_deployment": "gpt-4o",
+      "capabilities": [
+        "User history tracking",
+        "Cognitive evolution analysis",
+        "Context provision",
+        "Pattern recognition"
+      ],
+      "system_prompt_version": "1.0",
+      "average_tokens_per_request": 2000,
+      "temperature": 0.3,
+      "status": "deployed"
+    },
+    {
+      "name": "AgentOrchestrator",
+      "agent_id": "orchestrator",
+      "file": "backend/app/agents/orchestrator.py",
+      "azure_integration": "enabled",
+      "model_deployment": "indirect",
+      "capabilities": [
+        "Multi-agent coordination",
+        "Workflow management",
+        "Inter-agent communication",
+        "Conflict resolution"
+      ],
+      "coordinates_agents": [
+        "planner",
+        "content_generator",
+        "simulation",
+        "evaluator",
+        "mentor",
+        "memory"
+      ],
+      "status": "deployed"
+    }
+  ],
+  "supporting_services": {
+    "cosmos_db": {
+      "enabled": true,
+      "endpoint": "https://cognitivecosmosdb001.documents.azure.com:443/",
+      "database": "cognitivecosmosdb001",
+      "purpose": "Agent interaction storage (optional)"
+    },
+    "blob_storage": {
+      "enabled": true,
+      "account": "cognitivestblobacc001",
+      "container": "cognitivestblobacc001",
+      "purpose": "Content and media storage"
+    },
+    "application_insights": {
+      "enabled": true,
+      "instrumentation_key": "72586956-e12c-45e8-a853-3d12dfbb7e3f",
+      "region": "australiaeast",
+      "purpose": "Agent monitoring and telemetry"
+    }
+  },
+  "monitoring": {
+    "agent_interactions": {
+      "table": "agent_interactions",
+      "tracked_metrics": [
+        "latency_ms",
+        "token_usage",
+        "success_rate",
+        "error_rate"
+      ]
+    },
+    "performance_thresholds": {
+      "max_latency_ms": 5000,
+      "min_success_rate": 0.95,
+      "max_error_rate": 0.05
+    },
+    "alerts_configured": [
+      "High error rate (>5%)",
+      "High latency (>5s)",
+      "Token quota approaching limit"
+    ]
+  },
+  "security": {
+    "authentication": "azure_api_key",
+    "content_safety": "enabled",
+    "data_encryption": "at_rest_and_in_transit",
+    "compliance": [
+      "GDPR",
+      "SOC2"
+    ]
+  },
+  "cost_tracking": {
+    "model": "gpt-4o",
+    "pricing": {
+      "input_tokens_per_1m": 5.0,
+      "output_tokens_per_1m": 15.0,
+      "currency": "USD"
+    },
+    "estimated_monthly_tokens": 300000000,
+    "estimated_monthly_cost_usd": 4000
+  },
+  "deployment_verification": {
+    "all_agents_deployed": true,
+    "azure_resources_active": true,
+    "monitoring_configured": true,
+    "backup_configured": false,
+    "last_verified": "2026-02-28T00:00:00Z"
+  }
+}

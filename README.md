@@ -21,18 +21,21 @@ An AI-powered Learning Management System built on a **multi-agent architecture**
 │  │  │ Planner │ Content   │ Simulate │ Evaluator │ │ │
 │  │  │  Agent  │ Generator │  Agent   │   Agent   │ │ │
 │  │  └─────────┴───────────┴──────────┴───────────┘ │ │
-│  │                  │  Mentor Agent  │              │ │
-│  └──────────────────┴────────────────┴─────────────┘ │
+│  │     │  Mentor Agent  │  Memory Agent  │          │ │
+│  └─────┴────────────────┴────────────────┴─────────┘ │
 │                                                      │
-│  Azure AI Foundry │ MCP Tools │ Prometheus/OTel      │
+│  Azure OpenAI (gpt-4o) │ Azure AI Foundry            │
 └──────────┬──────────────┬──────────────┬─────────────┘
            │              │              │
     ┌──────▼──────┐ ┌─────▼────┐ ┌──────▼──────┐
-    │  PostgreSQL  │ │  Redis   │ │   Azure AI  │
+    │  PostgreSQL  │ │  Redis   │ │Azure Blob   │
+    │   (Neon)     │ │          │ │  Storage    │
     └─────────────┘ └──────────┘ └─────────────┘
 ```
 
 ## Agents
+
+All agents are deployed on **Azure OpenAI (gpt-4o)** via Azure AI Foundry and communicate through a unified orchestrator.
 
 | Agent                 | Role                                                                            |
 | --------------------- | ------------------------------------------------------------------------------- |
@@ -41,6 +44,10 @@ An AI-powered Learning Management System built on a **multi-agent architecture**
 | **Simulation Agent**  | Real-world scenario exercises with branching decisions & cognitive tracking     |
 | **Evaluator Agent**   | Scores submissions, builds cognitive profiles (8 dimensions), adaptive feedback |
 | **Mentor Agent**      | Conversational AI companion with full learner context for guidance & motivation |
+| **Memory Agent**      | Tracks user progress, cognitive evolution, and provides context to other agents |
+| **Orchestrator**      | Coordinates all agents, manages workflows, and handles inter-agent communication |
+
+**Azure Integration**: All agents use Azure OpenAI via the `BaseAgent` class with built-in monitoring, error handling, and token tracking.
 
 ## Tech Stack
 
@@ -154,13 +161,22 @@ CRACLE integrates with the [Model Context Protocol](https://modelcontextprotocol
 ```
 ├── backend/
 │   ├── app/
-│   │   ├── agents/          # 5 AI agents + orchestrator
+│   │   ├── agents/          # 7 AI agents (all on Azure OpenAI) + orchestrator
+│   │   │   ├── planner.py           # Planner Agent
+│   │   │   ├── content_generator.py # Content Generator Agent
+│   │   │   ├── simulation.py        # Simulation Agent
+│   │   │   ├── evaluator.py         # Evaluator Agent
+│   │   │   ├── mentor.py            # Mentor Agent
+│   │   │   ├── memory.py            # Memory Agent (NEW)
+│   │   │   ├── orchestrator.py      # Agent Coordinator
+│   │   │   └── base.py              # Base Agent (Azure OpenAI integration)
 │   │   ├── api/             # FastAPI routes & schemas
 │   │   ├── db/              # Database engine & session
 │   │   ├── models/          # SQLAlchemy ORM models
 │   │   └── services/        # Azure AI, MCP, monitoring
 │   ├── Dockerfile
-│   └── requirements.txt
+│   ├── requirements.txt
+│   └── verify_azure_agents.py  # Azure connectivity verification
 ├── frontend/
 │   ├── src/
 │   │   ├── api/             # API client & endpoints
@@ -174,9 +190,36 @@ CRACLE integrates with the [Model Context Protocol](https://modelcontextprotocol
 │   └── package.json
 ├── docker-compose.yml
 ├── .env.example
+├── AZURE_AGENTS_SETUP.md   # Detailed Azure deployment guide
+├── azure_agent_config.json # Azure agent configuration manifest
 ├── QUICKSTART.md
 └── README.md
 ```
+
+## Azure Deployment
+
+All 7 CRACLE agents are deployed on **Azure AI Foundry** with **Azure OpenAI (gpt-4o)**:
+
+### Azure Resources
+- **Azure OpenAI**: gpt-4o deployment for all agents
+- **Azure AI Foundry**: Project and agent orchestration
+- **Azure Blob Storage**: Course content and media storage
+- **Azure Application Insights**: Agent monitoring and telemetry
+- **Azure Cosmos DB**: Optional NoSQL storage for agent interactions
+
+### Verify Azure Connectivity
+```bash
+cd backend
+python verify_azure_agents.py
+```
+
+This script verifies:
+- ✅ Azure OpenAI configuration
+- ✅ All 7 agents can connect to Azure
+- ✅ Orchestrator setup
+- ✅ Token usage tracking
+
+For detailed Azure setup, see [AZURE_AGENTS_SETUP.md](AZURE_AGENTS_SETUP.md).
 
 ## License
 

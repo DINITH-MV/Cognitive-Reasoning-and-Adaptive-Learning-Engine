@@ -26,6 +26,7 @@ async def chat_with_mentor(
         message=data.message,
         conversation_history=data.conversation_history,
         db=db,
+        session_id=data.session_id,
     )
     return result
 

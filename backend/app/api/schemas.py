@@ -110,6 +110,7 @@ class EvaluationResponse(BaseModel):
 class MentorChatRequest(BaseModel):
     message: str = Field(min_length=1)
     conversation_history: Optional[List[Dict[str, str]]] = []
+    session_id: Optional[str] = None
 
 
 class MentorResponse(BaseModel):
