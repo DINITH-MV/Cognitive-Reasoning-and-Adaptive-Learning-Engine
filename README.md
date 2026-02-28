@@ -8,7 +8,7 @@ An AI-powered Learning Management System built on a **multi-agent architecture**
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│                   Next.js Frontend                   │
+│                   React Frontend                     │
 │  Dashboard │ Learning Path │ Simulation │ Monitoring │
 └────────────────────────┬────────────────────────────┘
                          │  REST API
@@ -46,7 +46,7 @@ An AI-powered Learning Management System built on a **multi-agent architecture**
 
 | Layer       | Technology                                                     |
 | ----------- | -------------------------------------------------------------- |
-| Frontend    | Next.js 15, React 19, TypeScript, Tailwind CSS v4, Recharts    |
+| Frontend    | React 18, Vite, TailwindCSS, React Router, Zustand, Recharts  |
 | Backend     | Python 3.12, FastAPI, SQLAlchemy 2 (async), Pydantic v2        |
 | AI          | Azure OpenAI (GPT-4o), Azure AI Foundry, Azure AI Projects SDK |
 | Database    | PostgreSQL (asyncpg), Redis                                    |
@@ -163,13 +163,18 @@ CRACLE integrates with the [Model Context Protocol](https://modelcontextprotocol
 │   └── requirements.txt
 ├── frontend/
 │   ├── src/
-│   │   ├── app/             # Next.js pages (dashboard, simulation, etc.)
-│   │   ├── components/      # Sidebar, charts, UI components
-│   │   └── lib/             # API client, utilities
+│   │   ├── api/             # API client & endpoints
+│   │   ├── components/      # Layout, navigation, reusable UI
+│   │   ├── pages/           # Dashboard, mentor, simulation pages
+│   │   ├── store/           # Zustand state management
+│   │   ├── App.jsx          # Main app with routing
+│   │   └── main.jsx         # Entry point
 │   ├── Dockerfile
+│   ├── nginx.conf          # Production web server config
 │   └── package.json
 ├── docker-compose.yml
 ├── .env.example
+├── QUICKSTART.md
 └── README.md
 ```
 

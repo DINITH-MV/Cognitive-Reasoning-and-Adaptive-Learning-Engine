@@ -50,16 +50,14 @@ services:
       redis:
         condition: service_healthy
 
-  # ─── Frontend (Next.js) ──────────────────────────────────
+  # ─── Frontend (React + Vite) ──────────────────────────────
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     restart: unless-stopped
     ports:
-      - "3000:3000"
-    environment:
-      NEXT_PUBLIC_API_URL: http://backend:8000
+      - "3000:80"
     depends_on:
       - backend
 

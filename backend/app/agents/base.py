@@ -18,6 +18,19 @@ from app.models.evaluation import AgentInteraction
 logger = structlog.get_logger(__name__)
 
 
+def convert_uuids_to_strings(obj: Any) -> Any:
+    """Recursively convert UUID objects to strings for JSON serialization."""
+    if isinstance(obj, uuid.UUID):
+        return str(obj)
+    elif isinstance(obj, dict):
+        return {key: convert_uuids_to_strings(value) for key, value in obj.items()}
+    elif isinstance(obj, list):
+        return [convert_uuids_to_strings(item) for item in obj]
+    elif isinstance(obj, tuple):
+        return tuple(convert_uuids_to_strings(item) for item in obj)
+    return obj
+
+
 class BaseAgent(ABC):
     """
     Abstract base class for all CRACLE agents.
@@ -108,15 +121,20 @@ class BaseAgent(ABC):
         error_message: str = None,
     ):
         """Record agent interaction in the database for monitoring."""
+        # Convert UUIDs to strings for JSON serialization
+        input_data_clean = convert_uuids_to_strings(input_data)
+        output_data_clean = convert_uuids_to_strings(output_data)
+        token_usage_clean = convert_uuids_to_strings(token_usage or {})
+        
         interaction = AgentInteraction(
             user_id=user_id,
             agent_name=self.name,
             action=action,
-            input_data=input_data,
-            output_data=output_data,
+            input_data=input_data_clean,
+            output_data=output_data_clean,
             status=status,
             latency_ms=latency_ms,
-            token_usage=token_usage or {},
+            token_usage=token_usage_clean,
             error_message=error_message,
         )
         db.add(interaction)

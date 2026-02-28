@@ -27,6 +27,7 @@ async def register(data: UserCreate, db: AsyncSession = Depends(get_db)):
         full_name=data.full_name,
     )
     db.add(user)
+    await db.flush()  # generate user.id
 
     # Initialize cognitive profile
     profile = CognitiveProfile(user_id=user.id)
