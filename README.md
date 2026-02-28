@@ -1,6 +1,24 @@
 # CRACLE — Cognitive Reasoning and Adaptive Learning Engine
 
-An AI-powered Learning Management System built on a **multi-agent architecture** with Azure AI Foundry, designed to deliver personalized, cognitively-aware learning experiences.
+[![Azure OpenAI](https://img.shields.io/badge/Azure%20OpenAI-GPT--4o-blue?logo=microsoft-azure)](https://azure.microsoft.com/en-us/products/ai-services/openai-service)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green?logo=fastapi)](https://fastapi.tiangolo.com/)
+[![React](https://img.shields.io/badge/React-18-blue?logo=react)](https://react.dev/)
+[![Railway](https://img.shields.io/badge/Deploy-Railway-blueviolet?logo=railway)](https://railway.app/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+**AI-powered adaptive learning platform with 7 specialized agents, real-time reasoning visualization, and personalized cognitive profiling.**
+
+CRACLE transforms education through intelligent multi-agent AI architecture. Seven specialized agents—powered by Azure OpenAI's GPT-4o—work together to create truly personalized learning experiences that adapt to each user's cognitive style, learning pace, and goals.
+
+## 🌟 Key Features
+
+- **🧠 7 Specialized AI Agents**: Memory, Planner, Content Generator, Simulation, Evaluator, Mentor, and Orchestrator working in concert
+- **🎬 Live Reasoning Visualization**: Watch AI agents think and collaborate in real-time via WebSocket
+- **🎯 Adaptive Learning Paths**: Dynamically generated and adjusted based on your performance and cognitive profile
+- **✍️ On-Demand Content**: AI generates custom lessons, quizzes, and exercises tailored to you
+- **🎮 Interactive Simulations**: Decision-making scenarios that adapt to your choices
+- **👨‍🏫 Personal AI Mentor**: Context-aware guidance and explanations
+- **📊 Cognitive Profiling**: Tracks how you learn, not just what you complete
 
 ---
 
