@@ -195,10 +195,7 @@
     "authentication": "azure_api_key",
     "content_safety": "enabled",
     "data_encryption": "at_rest_and_in_transit",
-    "compliance": [
-      "GDPR",
-      "SOC2"
-    ]
+    "compliance": ["GDPR", "SOC2"]
   },
   "cost_tracking": {
     "model": "gpt-4o",

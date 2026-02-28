@@ -55,14 +55,14 @@ CRACLE transforms education through intelligent multi-agent AI architecture. Sev
 
 All agents are deployed on **Azure OpenAI (gpt-4o)** via Azure AI Foundry and communicate through a unified orchestrator.
 
-| Agent                 | Role                                                                            |
-| --------------------- | ------------------------------------------------------------------------------- |
-| **Planner Agent**     | Analyzes goals & constraints → personalized learning roadmap with milestones    |
-| **Content Generator** | Creates courses, quizzes (Bloom's taxonomy), and micro-challenges               |
-| **Simulation Agent**  | Real-world scenario exercises with branching decisions & cognitive tracking     |
-| **Evaluator Agent**   | Scores submissions, builds cognitive profiles (8 dimensions), adaptive feedback |
-| **Mentor Agent**      | Conversational AI companion with full learner context for guidance & motivation |
-| **Memory Agent**      | Tracks user progress, cognitive evolution, and provides context to other agents |
+| Agent                 | Role                                                                             |
+| --------------------- | -------------------------------------------------------------------------------- |
+| **Planner Agent**     | Analyzes goals & constraints → personalized learning roadmap with milestones     |
+| **Content Generator** | Creates courses, quizzes (Bloom's taxonomy), and micro-challenges                |
+| **Simulation Agent**  | Real-world scenario exercises with branching decisions & cognitive tracking      |
+| **Evaluator Agent**   | Scores submissions, builds cognitive profiles (8 dimensions), adaptive feedback  |
+| **Mentor Agent**      | Conversational AI companion with full learner context for guidance & motivation  |
+| **Memory Agent**      | Tracks user progress, cognitive evolution, and provides context to other agents  |
 | **Orchestrator**      | Coordinates all agents, manages workflows, and handles inter-agent communication |
 
 **Azure Integration**: All agents use Azure OpenAI via the `BaseAgent` class with built-in monitoring, error handling, and token tracking.
@@ -71,7 +71,7 @@ All agents are deployed on **Azure OpenAI (gpt-4o)** via Azure AI Foundry and co
 
 | Layer       | Technology                                                     |
 | ----------- | -------------------------------------------------------------- |
-| Frontend    | React 18, Vite, TailwindCSS, React Router, Zustand, Recharts  |
+| Frontend    | React 18, Vite, TailwindCSS, React Router, Zustand, Recharts   |
 | Backend     | Python 3.12, FastAPI, SQLAlchemy 2 (async), Pydantic v2        |
 | AI          | Azure OpenAI (GPT-4o), Azure AI Foundry, Azure AI Projects SDK |
 | Database    | PostgreSQL (asyncpg), Redis                                    |
@@ -219,6 +219,7 @@ CRACLE integrates with the [Model Context Protocol](https://modelcontextprotocol
 All 7 CRACLE agents are deployed on **Azure AI Foundry** with **Azure OpenAI (gpt-4o)**:
 
 ### Azure Resources
+
 - **Azure OpenAI**: gpt-4o deployment for all agents
 - **Azure AI Foundry**: Project and agent orchestration
 - **Azure Blob Storage**: Course content and media storage
@@ -226,12 +227,14 @@ All 7 CRACLE agents are deployed on **Azure AI Foundry** with **Azure OpenAI (gp
 - **Azure Cosmos DB**: Optional NoSQL storage for agent interactions
 
 ### Verify Azure Connectivity
+
 ```bash
 cd backend
 python verify_azure_agents.py
 ```
 
 This script verifies:
+
 - ✅ Azure OpenAI configuration
 - ✅ All 7 agents can connect to Azure
 - ✅ Orchestrator setup
